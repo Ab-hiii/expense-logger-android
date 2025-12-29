@@ -1,39 +1,22 @@
 package com.example.expenselogger.data.repository
 
-import com.example.expenselogger.data.AppDatabase
-import com.example.expenselogger.data.entity.CategoryEntity
+import com.example.expenselogger.data.dao.ExpenseDao
 import com.example.expenselogger.data.entity.ExpenseEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class ExpenseRepository(
-    private val db: AppDatabase
+    private val expenseDao: ExpenseDao
 ) {
 
-    fun observeExpenses(): Flow<List<ExpenseEntity>> = flow {
-        emit(db.expenseDao().getAllExpenses())
+    fun getAllExpenses(): Flow<List<ExpenseEntity>> {
+        return expenseDao.getAllExpenses()
     }
 
-    suspend fun addExpense(expense: ExpenseEntity) {
-        db.expenseDao().insert(expense)
+    fun getExpensesByCategory(categoryId: Long): Flow<List<ExpenseEntity>> {
+        return expenseDao.getExpensesByCategory(categoryId)
     }
 
-    fun observeCategories(): Flow<List<CategoryEntity>> = flow {
-        emit(db.categoryDao().getAllCategories())
-    }
-
-    suspend fun seedCategoriesIfEmpty() {
-        if (db.categoryDao().getAllCategories().isEmpty()) {
-            listOf(
-                "Food",
-                "Transport",
-                "Shopping",
-                "Rent",
-                "Entertainment",
-                "Other"
-            ).forEach {
-                db.categoryDao().insert(CategoryEntity(name = it))
-            }
-        }
+    suspend fun insertExpense(expense: ExpenseEntity) {
+        expenseDao.insertExpense(expense)
     }
 }

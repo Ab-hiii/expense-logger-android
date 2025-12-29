@@ -4,23 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.expenselogger.data.dao.*
-import com.example.expenselogger.data.entity.*
+import com.example.expenselogger.data.dao.CategoryDao
+import com.example.expenselogger.data.dao.ExpenseDao
+import com.example.expenselogger.data.entity.CategoryEntity
+import com.example.expenselogger.data.entity.ExpenseEntity
 
 @Database(
     entities = [
         ExpenseEntity::class,
-        CategoryEntity::class,
-        MerchantEntity::class,
-        RawTransactionEntity::class
+        CategoryEntity::class
     ],
-    version = 1
+    version = 2,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun expenseDao(): ExpenseDao
     abstract fun categoryDao(): CategoryDao
-    abstract fun rawTransactionDao(): RawTransactionDao
 
     companion object {
         @Volatile
@@ -28,11 +28,14 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun get(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
+                Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "expense_logger.db"
-                ).build().also { INSTANCE = it }
+                    "expense_db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }

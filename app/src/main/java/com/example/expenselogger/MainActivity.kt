@@ -3,38 +3,22 @@ package com.example.expenselogger
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
-import com.example.expenselogger.data.AppDatabase
-import com.example.expenselogger.data.repository.ExpenseRepository
-import com.example.expenselogger.ui.screen.AddExpenseScreen
-import com.example.expenselogger.ui.screen.ExpenseListScreen
-import com.example.expenselogger.ui.viewmodel.ExpenseViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.expenselogger.ui.navigation.AppNavGraph
+import com.example.expenselogger.viewmodel.ExpenseViewModel
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val db = AppDatabase.get(this)
-        val repository = ExpenseRepository(db)
-        val expenseViewModel = ExpenseViewModel(repository)
-
         setContent {
+            val navController = rememberNavController()
+            val expenseViewModel: ExpenseViewModel = viewModel()
 
-            // simple screen switch
-            var showAddExpense by remember { mutableStateOf(false) }
-
-            if (showAddExpense) {
-                AddExpenseScreen(
-                    viewModel = expenseViewModel,
-                    onDone = { showAddExpense = false }
-                )
-            } else {
-                ExpenseListScreen(
-                    viewModel = expenseViewModel,
-                    onAddExpense = { showAddExpense = true }
-                )
-            }
+            AppNavGraph(
+                navController = navController,
+                viewModel = expenseViewModel
+            )
         }
     }
 }
