@@ -1,12 +1,18 @@
-package com.example.expenselogger.viewmodel
+package com.example.expenselogger.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.expenselogger.data.repository.ExpenseRepository
 
-class ExpenseViewModelFactory : ViewModelProvider.Factory {
+class ExpenseViewModelFactory(
+    private val repository: ExpenseRepository
+) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        throw IllegalStateException(
-            "ExpenseViewModelFactory is disabled during recovery phase"
-        )
+        if (modelClass.isAssignableFrom(ExpenseViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ExpenseViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

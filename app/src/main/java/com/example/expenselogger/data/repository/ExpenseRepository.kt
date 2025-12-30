@@ -8,15 +8,14 @@ class ExpenseRepository(
     private val expenseDao: ExpenseDao
 ) {
 
-    fun getAllExpenses(): Flow<List<ExpenseEntity>> {
-        return expenseDao.getAllExpenses()
-    }
-
-    fun getExpensesByCategory(categoryId: Long): Flow<List<ExpenseEntity>> {
-        return expenseDao.getExpensesByCategory(categoryId)
-    }
+    fun getAllExpenses(): Flow<List<ExpenseEntity>> =
+        expenseDao.getAllExpenses()
 
     suspend fun insertExpense(expense: ExpenseEntity) {
         expenseDao.insertExpense(expense)
+    }
+
+    suspend fun deleteExpense(expense: ExpenseEntity) {
+        expenseDao.deleteExpense(expense)
     }
 }
